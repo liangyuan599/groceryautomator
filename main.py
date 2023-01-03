@@ -16,7 +16,10 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
+import time
 from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+import re
 
 def test_eight_components():
     driver = webdriver.Chrome()
@@ -60,10 +63,12 @@ def go_to_target():
 
     # Go to the target website
     driver.get("https://www.target.com/c/order-pickup/-/N-ng0a0")
-    print(driver.title)
+    #print(driver.title)
 
     # Return the driver object
     return driver
+
+
 
 def document_initialised(driver):
     return driver.execute_script("return initialised")
@@ -76,7 +81,6 @@ Takes in url of the page & number, and adds that number of items to cart
 '''
 def add_an_item(url_link, number):
     print("In add an item function")
-
 
 
 
@@ -101,13 +105,42 @@ def search_item(name):
 
     # Hits enter
     search_bar.send_keys(Keys.ENTER)
+    driver.implicitly_wait(10)
 
     # Returns the first result
+    results = driver.find_elements(By.CSS_SELECTOR, "div[class^='styles__ProductCardItemInfoDiv-sc']")
+    driver.implicitly_wait(10)
+    result = results[0]
+    time.sleep(2)
+    result.click()
 
+    '''
+    At some point, need to build in more explicit waits in here 
+    
+    for result in results:
+        print(result.text)
+        time.sleep(5)
+        result.click()
+    
+    for e in results:
+        print(e.text)
 
+        if re.match(e.text, name):
+            print("Success")
+            #driver.execute_script("arguments[0].click();", e)
+    try:
+        element = WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable((By.CSS_SELECTOR, "div[class^='styles__StyledCol-sc']"))
+        )
 
+    # Quits if it is not found
+    finally:
+        print("Fail")
+        driver.quit()
+    '''
+
+# MAIN
 # Need to find the
-
 service = Service('chromedriver.exe')
 service.start()
 search_item("kiwi fruit")
