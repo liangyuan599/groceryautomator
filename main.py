@@ -142,5 +142,5 @@ def search_item(name):
 # Need to find the
 service = Service('chromedriver.exe')
 service.start()
-driver = search_item("kiwi fruit")
+driver = search_item("the mighty cream")
 add_an_item(driver, 2)
