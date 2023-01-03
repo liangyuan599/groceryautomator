@@ -17,33 +17,10 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 import time
+from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import re
-
-def test_eight_components():
-    driver = webdriver.Chrome()
-
-    driver.get("https://www.selenium.dev/selenium/web/web-form.html")
-
-    title = driver.title
-    assert title == "Web form"
-
-    driver.implicitly_wait(2)
-
-    text_box = driver.find_element(by=By.NAME, value="my-text")
-    submit_button = driver.find_element(by=By.CSS_SELECTOR, value="button")
-
-    text_box.send_keys("Selenium")
-    submit_button.click()
-
-    message = driver.find_element(by=By.ID, value="message")
-    value = message.text
-    print(message.text)
-    assert value == "Received!"
-    #print("received!")
-
-    driver.quit()
 
 '''
 Goes to Target website, and 
@@ -68,7 +45,10 @@ def go_to_target():
     # Return the driver object
     return driver
 
-
+'''
+Logs into my target account if it isn't already logged in
+def login_to_target(username, password):
+'''
 
 def document_initialised(driver):
     return driver.execute_script("return initialised")
@@ -79,10 +59,27 @@ Below function adds an item to the cart
 
 Takes in url of the page & number, and adds that number of items to cart
 '''
-def add_an_item(url_link, number):
-    print("In add an item function")
 
 
+def add_an_item(driver, number):
+    print("Adding " + str(number) + " items")
+    time.sleep(2)
+
+    # Access drop down menu
+
+
+    # Finds the button
+    button = driver.find_element(By.CSS_SELECTOR, "button[id^='addToCartButton']")
+    button.click()
+
+    time.sleep(2)
+    print("success")
+
+    # Click out of it to go back to the normal loading screen
+    action = ActionChains(driver)
+    action.move_by_offset(100, 200)
+    action.click()
+    action.perform()
 
 
 '''
@@ -90,14 +87,15 @@ Searches for items, returns the url of that item
 
 By default, selects the first item provided and returns that url, takes in string  
 '''
+
+
 def search_item(name):
-    print("In searching function")
+    print("Searching for " + name)
     # Go to target
     driver = go_to_target()
 
     # Finds the search bar
     search_bar = driver.find_element(By.TAG_NAME, "input")
-    print(search_bar)
     searching_var = name
 
     # Enters search  into first search bar
@@ -108,11 +106,12 @@ def search_item(name):
     driver.implicitly_wait(10)
 
     # Returns the first result
-    results = driver.find_elements(By.CSS_SELECTOR, "div[class^='styles__ProductCardItemInfoDiv-sc']")
+    all_items = driver.find_elements(By.CSS_SELECTOR, "div[class^='styles__ProductCardItemInfoDiv-sc']")
     driver.implicitly_wait(10)
-    result = results[0]
+    result = all_items[0]
     time.sleep(2)
     result.click()
+    return driver
 
     '''
     At some point, need to build in more explicit waits in here 
@@ -143,4 +142,5 @@ def search_item(name):
 # Need to find the
 service = Service('chromedriver.exe')
 service.start()
-search_item("kiwi fruit")
+driver = search_item("kiwi fruit")
+add_an_item(driver, 2)
