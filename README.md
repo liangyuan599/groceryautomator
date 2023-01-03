@@ -1,0 +1,2 @@
+# groceryautomator
+Automates my groceries
