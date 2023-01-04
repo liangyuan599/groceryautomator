@@ -86,32 +86,46 @@ def add_an_item(driver, number):
 Searches for items, returns the url of that item 
 
 By default, selects the first item provided and returns that url, takes in string  
+
+Ideas for future: 
+* Search should be more attuned to what the search term is
 '''
 
 
-def search_item(name):
+def search_item(name, driver):
     print("Searching for " + name)
-    # Go to target
-    driver = go_to_target()
 
-    # Finds the search bar
+    # Finds the pickup bar
     search_bar = driver.find_element(By.TAG_NAME, "input")
     searching_var = name
 
-    # Enters search  into first search bar
+    # Enters search into first search bar
+    time.sleep(2)
+    search_bar.send_keys(Keys.CONTROL + "a")
+    search_bar.send_keys(Keys.DELETE)
     search_bar.send_keys(searching_var)
 
     # Hits enter
     search_bar.send_keys(Keys.ENTER)
-    driver.implicitly_wait(10)
 
+    # Click the pickup button
+    time.sleep(2)
+    lefthand_buttons = driver.find_elements(By.CSS_SELECTOR, "div[class^='BaseButton-sc']")
+    time.sleep(2)
+    for l in lefthand_buttons:
+        print(l)
+    #lefthand_button = lefthand_buttons[1]
+    #lefthand_button.click()
+
+    time.sleep(2)
     # Returns the first result
     all_items = driver.find_elements(By.CSS_SELECTOR, "div[class^='styles__ProductCardItemInfoDiv-sc']")
-    driver.implicitly_wait(10)
+    time.sleep(2)
     result = all_items[0]
     time.sleep(2)
     result.click()
-    return driver
+
+    return 0
 
     '''
     At some point, need to build in more explicit waits in here 
@@ -139,8 +153,11 @@ def search_item(name):
     '''
 
 # MAIN
-# Need to find the
+# Test with a number of items
 service = Service('chromedriver.exe')
 service.start()
-driver = search_item("the mighty cream")
-add_an_item(driver, 2)
+grocery_list = ['granola', 'apple fruit', 'milk fairlife']
+driver = go_to_target()
+for item in grocery_list:
+    search_item(item, driver)
+    add_an_item(driver, 1)
