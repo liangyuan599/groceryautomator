@@ -57,7 +57,7 @@ def login(driver):
     # Navigate to sign in button and click on sign in button twice
     login_button = driver.find_element(By.CSS_SELECTOR, "a[aria-label^='Account, sign in']")
     login_button.click()
-    time.sleep(2)
+    time.sleep(1)
     login_button = driver.find_element(By.CSS_SELECTOR, "span[class^='sc-cCjUiG dHFKFs']")
     login_button.click()
 
@@ -69,7 +69,7 @@ def login(driver):
     username = content[0]
     password = content[1]
 
-    time.sleep(2)
+    time.sleep(1)
     # pass in username
     username_input = driver.find_element(By.CSS_SELECTOR, "input[autocomplete^='username']")
     username_input.send_keys(username)
@@ -78,7 +78,7 @@ def login(driver):
     password_input = driver.find_element(By.CSS_SELECTOR, "input[autocomplete^='current-password']")
     password_input.send_keys(password)
 
-    time.sleep(2)
+    time.sleep(1)
     # Click Sign In
     sign_in_button = driver.find_element(By.CSS_SELECTOR, "button[id^='login']")
     time.sleep(2)
@@ -109,8 +109,14 @@ def add_an_item(driver, number):
 
 
     # Finds the button
-    button = driver.find_element(By.CSS_SELECTOR, "button[id^='addToCartButton']")
-    button.click()
+    buttons = driver.find_elements(By.CSS_SELECTOR, "button[id^='addToCartButton']")
+    if len(buttons) > 0:
+        button = buttons[0]
+        button.click()
+    else:
+        print("Error - couldn't add item. Continuing to next one")
+        return 0
+
 
     time.sleep(2)
     print("success")
@@ -137,36 +143,40 @@ def search_item(name, driver):
     print("Searching for " + name)
 
     # Finds the pickup bar
-    search_bar = driver.find_element(By.TAG_NAME, "input")
-    searching_var = name
+    search_bars = driver.find_elements(By.CSS_SELECTOR, "input[id^='search']")
+    if len(search_bars) > 0:
+        search_bar = search_bars[0]
+        searching_var = name
 
-    # Enters search into first search bar
-    time.sleep(2)
-    search_bar.send_keys(Keys.CONTROL + "a")
-    search_bar.send_keys(Keys.DELETE)
-    search_bar.send_keys(searching_var)
+        # Enters search into first search bar
+        time.sleep(1)
+        search_bar.send_keys(Keys.CONTROL + "a")
+        search_bar.send_keys(Keys.DELETE)
+        search_bar.send_keys(searching_var)
 
-    # Hits enter
-    search_bar.send_keys(Keys.ENTER)
+        # Hits enter
+        search_bar.send_keys(Keys.ENTER)
 
-    # Click the pickup button
-    time.sleep(2)
-    lefthand_buttons = driver.find_elements(By.CSS_SELECTOR, "div[class^='BaseButton-sc']")
-    time.sleep(2)
-    for l in lefthand_buttons:
-        print(l)
-    #lefthand_button = lefthand_buttons[1]
-    #lefthand_button.click()
+        # Click the pickup button
+        time.sleep(1)
+        lefthand_buttons = driver.find_elements(By.CSS_SELECTOR, "div[class^='BaseButton-sc']")
+        time.sleep(1)
+        for l in lefthand_buttons:
+            print(l)
+        #lefthand_button = lefthand_buttons[1]
+        #lefthand_button.click()
 
-    time.sleep(2)
-    # Returns the first result
-    all_items = driver.find_elements(By.CSS_SELECTOR, "div[class^='styles__ProductCardItemInfoDiv-sc']")
-    time.sleep(2)
-    result = all_items[0]
-    time.sleep(2)
-    result.click()
-
-    return 0
+        time.sleep(1)
+        # Returns the first result
+        all_items = driver.find_elements(By.CSS_SELECTOR, "div[class^='styles__ProductCardItemInfoDiv-sc']")
+        time.sleep(1)
+        result = all_items[0]
+        time.sleep(1)
+        result.click()
+        return 1
+    else:
+        print("Error - returning to main")
+        return 0
 
     '''
     At some point, need to build in more explicit waits in here 
@@ -193,11 +203,29 @@ def search_item(name, driver):
         driver.quit()
     '''
 
+'''
+Clear cart function
+
+Clears existing cart - does this at the start of every new run of the script
+'''
+
+def clear_cart():
+    # Clicks the cart button
+
+
+    # Removes every item in the cart
+
+
+
+
+
+
+
 # MAIN
 # Test with a number of items
 service = Service('chromedriver.exe')
 service.start()
-grocery_list = ['raisin rosemary crisps']
+grocery_list = ['celsius', 'chobani greek yogurt', 'fairlife', 'apple honeycrisp']
 driver = go_to_target()
 for item in grocery_list:
     time.sleep(1)
