@@ -41,8 +41,48 @@ def go_to_target():
     # Go to the target website
     driver.get("https://www.target.com/c/order-pickup/-/N-ng0a0")
     #print(driver.title)
+    driver = login(driver)
 
     # Return the driver object
+    return driver
+
+'''
+Logs into Target with my details 
+
+Gets called by go to target function
+'''
+
+def login(driver):
+
+    # Navigate to sign in button and click on sign in button twice
+    login_button = driver.find_element(By.CSS_SELECTOR, "a[aria-label^='Account, sign in']")
+    login_button.click()
+    time.sleep(2)
+    login_button = driver.find_element(By.CSS_SELECTOR, "span[class^='sc-cCjUiG dHFKFs']")
+    login_button.click()
+
+    # Open the login file
+    login_details = open("login.txt", "r")
+
+    # Read the lines and store it in an array
+    content = login_details.readlines()
+    username = content[0]
+    password = content[1]
+
+    time.sleep(2)
+    # pass in username
+    username_input = driver.find_element(By.CSS_SELECTOR, "input[autocomplete^='username']")
+    username_input.send_keys(username)
+
+    # pass in password
+    password_input = driver.find_element(By.CSS_SELECTOR, "input[autocomplete^='current-password']")
+    password_input.send_keys(password)
+
+    time.sleep(2)
+    # Click Sign In
+    sign_in_button = driver.find_element(By.CSS_SELECTOR, "button[id^='login']")
+    time.sleep(2)
+    sign_in_button.click()
     return driver
 
 '''
@@ -78,6 +118,7 @@ def add_an_item(driver, number):
     # Click out of it to go back to the normal loading screen
     action = ActionChains(driver)
     action.move_by_offset(100, 200)
+
     action.click()
     action.perform()
 
@@ -156,8 +197,9 @@ def search_item(name, driver):
 # Test with a number of items
 service = Service('chromedriver.exe')
 service.start()
-grocery_list = ['granola', 'apple fruit', 'milk fairlife']
+grocery_list = ['raisin rosemary crisps']
 driver = go_to_target()
 for item in grocery_list:
+    time.sleep(1)
     search_item(item, driver)
     add_an_item(driver, 1)
