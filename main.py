@@ -20,6 +20,7 @@ import time
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import Select
 import re
 
 '''
@@ -57,7 +58,7 @@ def login(driver):
     # Navigate to sign in button and click on sign in button twice
     login_button = driver.find_element(By.CSS_SELECTOR, "a[aria-label^='Account, sign in']")
     login_button.click()
-    time.sleep(1)
+    time.sleep(2)
     login_button = driver.find_element(By.CSS_SELECTOR, "span[class^='sc-cCjUiG dHFKFs']")
     login_button.click()
 
@@ -69,7 +70,7 @@ def login(driver):
     username = content[0]
     password = content[1]
 
-    time.sleep(1)
+    time.sleep(2)
     # pass in username
     username_input = driver.find_element(By.CSS_SELECTOR, "input[autocomplete^='username']")
     username_input.send_keys(username)
@@ -209,14 +210,46 @@ Clear cart function
 Clears existing cart - does this at the start of every new run of the script
 '''
 
-def clear_cart():
+def clear_cart(driver):
+    time.sleep(2)
+    # Find the cart button
+    cart_links = driver.find_elements(By.CSS_SELECTOR, "a[data-test^='@web/CartLink']")
+
+    time.sleep(2)
     # Clicks the cart button
+    if len(cart_links) > 0:
+        cart_link = cart_links[0]
+        cart_link.click()
+    else:
+        print("Couldn't find cart link")
+        return 0
 
-
+    time.sleep(1)
     # Removes every item in the cart
+    edit_buttons = driver.find_elements(By.CSS_SELECTOR, "button[aria-label^='Edit for Order Pick']")
+    if len(edit_buttons) > 0:
+        edit_button = edit_buttons[0]
+        edit_button.click()
+    else:
+        print("Couldn't find edit button")
+        return 0
 
+    time.sleep(1)
+    # Hits remove item
+    remove_buttons = driver.find_elements(By.CSS_SELECTOR, "div[class^='styles__OptionText-sc-19q5xt2-2 fTfgyl']")
+    print(len(remove_buttons))
+    if len(remove_buttons) > 0:
+        remove_button = remove_buttons[3]
+        remove_button.click()
+    else:
+        print("Couldn't find remove button")
+        return 0
 
+    time.sleep(1)
 
+    # Confirms
+    remove_confirm_button = driver.find_element(By.CSS_SELECTOR, "button[class^='BaseButton-sc-j0jbcc-0 ButtonPrimary-sc-1qgspc1-0 fdaZTm eitQue']")
+    driver.execute_script("arguments[0].click();", remove_confirm_button)
 
 
 
@@ -227,7 +260,11 @@ service = Service('chromedriver.exe')
 service.start()
 grocery_list = ['celsius', 'chobani greek yogurt', 'fairlife', 'apple honeycrisp']
 driver = go_to_target()
+clear_cart(driver)
+
+'''
 for item in grocery_list:
     time.sleep(1)
     search_item(item, driver)
     add_an_item(driver, 1)
+'''
